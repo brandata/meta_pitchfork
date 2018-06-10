@@ -1,20 +1,20 @@
 import requests
 from bs4 import BeautifulSoup
-import urllib2  # html scraper
+import urllib.request  # html scraper
+import urllib.error
 import re
 from bs4 import BeautifulSoup  # html parser. More info at http://www.crummy.com/software/BeautifulSoup/
 import sys  # exit quits program prematurely in event of error
 import sqlite3  # allows interaction with sql database (henceforth db)
 import datetime  # strptime and strftime convert between date formats
 import time  # sleep allows slight pause after each request to pitchfork's servers
-import \
-    numpy  # random.exponential determines variable sleep time between server requests; more human-like, for what it's worth.
+import numpy  # random.exponential determines variable sleep time between server requests; more human-like, for what it's worth.
 import itertools  # count function is convenient iterator
 import \
     signal  # handles Timeout errors, in case scrape/parse takes too long. Only works on UNIX-based OS, sorry Windows users.
 
 BASE_URL = "http://www.metacritic.com/publication/pitchfork?page=0"
-OPENER = urllib2.build_opener()
+OPENER = urllib.request.build_opener()
 OPENER.addheaders = [
     ('User-agent', 'Mozilla/5.0')]  # perhaps disingenuous, but claims web scraper is a user-agent vs bot
 AVERAGE_SECONDS_BETWEEN_REQUESTS = 5  # that being said, be kind to pitchfork's servers
@@ -34,12 +34,12 @@ def get_site(url):
     try:
         response = OPENER.open(url)
         if response.code == 200:
-            print "Scraping %s" % url
+            print("Scraping %s" % url)
             html = response.read()
         else:
-            print "Invalid URL: %s" % url
-    except urllib2.HTTPError:
-        print "Failed to open %s" % url
+            print("Invalid URL: %s" % url)
+    except urllib.request.HTTPError:
+        print("Failed to open %s" % url)
 
     return BeautifulSoup(html, 'lxml')
 
@@ -57,7 +57,7 @@ for r in review_wraps:
 
     pf_url = r.find_all('a', class_='external')[0].attrs['href']
     meta_url = META_URL + r.find_all('a')[0].attrs['href']
-    print metascore, criticscore, pf_url, meta_url
+    print(metascore, criticscore, pf_url, meta_url)
 
 ################################################
 ################################################
@@ -73,4 +73,4 @@ user_score = meta_soup.findAll('div', {'class': '.metascore_w.user.large'})
 
 
 # Enter PF url and scrape
-print 1
+print(1)
