@@ -27,7 +27,7 @@ META_URL = "www.metacritic.com"
 ################################################
 
 url = BASE_URL
-
+#ADDING A COMMENT TO TEST
 
 
 def get_site(url):
