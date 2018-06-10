@@ -29,6 +29,7 @@ META_URL = "www.metacritic.com"
 url = BASE_URL
 
 
+
 def get_site(url):
     html = None
     try:
