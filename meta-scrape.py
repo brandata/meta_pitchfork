@@ -72,6 +72,24 @@ meta_soup = get_site(pf_url)
 user_score = meta_soup.findAll('div', {'class': '.metascore_w.user.large'})
 #user_score = user_score[0].find_all('div', {'class': 'metascore_w user large'})
 
+# pulling the genre, though we will need to do some string manipulation to clean it up. will also need to decide how to
+# store for multiple genres
+meta_genre = meta_soup.findAll('li', {'class': 'summary_detail product_genre'})[0].text
+print(meta_genre)
 
-# Enter PF url and scrape
+################################################
+################################################
+# This section is where we pull a couple necessary details from pitchfork
+pit_url = 'https://pitchfork.com/reviews/albums/jon-hassell-listening-to-pictures-pentimento-volume-one/'
+
+pitfrk_soup = get_site(pit_url)
+
+# grabs the pitchfork contributor (author of the article)
+pitfrk_contributor = pitfrk_soup.find_all('a', {'class': 'authors-detail__display-name'})[0].text
+print(pitfrk_contributor)
+
+# grabs the genre as reported by pitchfork
+pitfrk_genre = pitfrk_soup.find_all('a', {'class': 'genre-list__link'})[0].text
+print(pitfrk_genre)
+
 print(1)

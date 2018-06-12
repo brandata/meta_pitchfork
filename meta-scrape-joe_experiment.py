@@ -1,17 +1,7 @@
-import requests
-from bs4 import BeautifulSoup
 import urllib.request  # html scraper
 import urllib.error
-import re
 from bs4 import BeautifulSoup  # html parser. More info at http://www.crummy.com/software/BeautifulSoup/
-import sys  # exit quits program prematurely in event of error
 import sqlite3  # allows interaction with sql database (henceforth db)
-import datetime  # strptime and strftime convert between date formats
-import time  # sleep allows slight pause after each request to pitchfork's servers
-import numpy  # random.exponential determines variable sleep time between server requests; more human-like, for what it's worth.
-import itertools  # count function is convenient iterator
-import \
-    signal  # handles Timeout errors, in case scrape/parse takes too long. Only works on UNIX-based OS, sorry Windows users.
 
 BASE_URL = "http://www.metacritic.com/publication/pitchfork?page=0"
 OPENER = urllib.request.build_opener()
@@ -72,15 +62,24 @@ meta_soup = get_site(pf_url)
 user_score = meta_soup.findAll('div', {'class': '.metascore_w.user.large'})
 #user_score = user_score[0].find_all('div', {'class': 'metascore_w user large'})
 
+# pulling the genre, though we will need to do some string manipulation to clean it up. will also need to decide how to
+# store for multiple genres
+meta_genre = meta_soup.findAll('li', {'class': 'summary_detail product_genre'})[0].text
+print(meta_genre)
 
 ################################################
 ################################################
+# This section is where we pull a couple necessary details from pitchfork
 pit_url = 'https://pitchfork.com/reviews/albums/jon-hassell-listening-to-pictures-pentimento-volume-one/'
 
 pitfrk_soup = get_site(pit_url)
 
-# pitfrk genre
-pitfrk_genre = pitfrk_soup.find_all('a', {'class': 'author-detail__display-name'})
+# grabs the pitchfork contributor (author of the article)
+pitfrk_contributor = pitfrk_soup.find_all('a', {'class': 'authors-detail__display-name'})[0].text
+print(pitfrk_contributor)
 
-#  Enter PF url and scrape
+# grabs the genre as reported by pitchfork
+pitfrk_genre = pitfrk_soup.find_all('a', {'class': 'genre-list__link'})[0].text
+print(pitfrk_genre)
+
 print(1)
