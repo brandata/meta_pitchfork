@@ -1,0 +1,12 @@
+Go to the page that holds the Pitchfork reviews that metacritic stores.
+
+There are about 20 reviews a page.
+
+From the first review, so the first box on the page, pull the relevant details in.
+
+These will include the Metacritic score and the pitchfork score, and the links to the Metacritic review and the Pitchfork review.
+From here we want to grab some information from the pitchfork review, using the link taken from the first review, and grab some more details.
+These include “Artist name”, “Album Name”, Reviewer, Date Published, Genre, Designation (Best New Music).
+Then we use the Meta critic link to grab other information a couple other pieces of relevant information, including the “user score”
+After we’ve grabbed all of the information, we save those items as an entry in a database. That is one entry. We do this for every review on the page.
+Then we go to the next page and pull all review from there.
