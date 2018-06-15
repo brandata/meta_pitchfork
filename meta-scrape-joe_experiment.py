@@ -4,6 +4,7 @@ from bs4 import BeautifulSoup  # html parser. More info at http://www.crummy.com
 import sqlite3  # allows interaction with sql database (henceforth db)
 import time
 import numpy  # random.exponential determines variable sleep time between server requests; more human-like, for what it's worth.
+import itertools  # count function is convenient iterator
 
 BASE_URL = "http://www.metacritic.com/publication/pitchfork?page=" # adjusted
 OPENER = urllib.request.build_opener()
@@ -13,7 +14,7 @@ AVERAGE_SECONDS_BETWEEN_REQUESTS = 5  # that being said, be kind to pitchfork's 
 START_AT_PAGE = 1  # album review page at which to begin scraping/parsing. Update this if program hangs and must be rerun.
 DATABASE_NAME = 'meta-reviews.db'  # must end in .db
 META_URL = "www.metacritic.com"
-
+PAGE_NUMBER = 0
 
 ################################################
 ################################################
@@ -37,14 +38,14 @@ def get_site(url):
     return BeautifulSoup(html, 'lxml')
 
 #############################################
-# Scrape main meta scritic page
+# Scrape main meta critic page
 
-page_number = 0
+
 
 # testing this up to page 5 to see if it will pull the first five pages
-while page_number < 5:
+while PAGE_NUMBER < 5:
 
-    page_to_pull = BASE_URL + str(page_number)
+    page_to_pull = BASE_URL + str(PAGE_NUMBER)
 
     main_soup = get_site(page_to_pull)
 
@@ -60,7 +61,6 @@ while page_number < 5:
 
         # needs an "http://" infront of it for it to be valid
         meta_url = "http://" + META_URL + r.find_all('a')[0].attrs['href']
-        # print(type(meta_url))
 
         # Then we pull the necessary information from the metacritic review of that album.
         meta_soup = get_site(meta_url)
@@ -71,11 +71,15 @@ while page_number < 5:
         pitfrk_soup = get_site(pf_url)
         pitfrk_contributor = pitfrk_soup.find_all('a', {'class': 'authors-detail__display-name'})[0].text
         pitfrk_genre = pitfrk_soup.find_all('a', {'class': 'genre-list__link'})[0].text
+        # artist
+        # album name
 
         # At this point we should save the items to a database
         print(metascore, criticscore, pf_url, meta_url, pitfrk_contributor, pitfrk_genre)
         print(1)
         # time.sleep(numpy.random.exponential(AVERAGE_SECONDS_BETWEEN_REQUESTS, 1))
 
-    page_number += 1
+    PAGE_NUMBER += 1
+
+
 
