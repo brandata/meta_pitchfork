@@ -7,8 +7,7 @@ import sys  # exit quits program prematurely in event of error
 import sqlite3  # allows interaction with sql database (henceforth db)
 import datetime  # strptime and strftime convert between date formats
 import time  # sleep allows slight pause after each request to pitchfork's servers
-import \
-    numpy  # random.exponential determines variable sleep time between server requests; more human-like, for what it's worth.
+import numpy  # random.exponential determines variable sleep time between server requests; more human-like, for what it's worth.
 import itertools  # count function is convenient iterator
 import \
     signal  # handles Timeout errors, in case scrape/parse takes too long. Only works on UNIX-based OS, sorry Windows users.

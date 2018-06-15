@@ -2,8 +2,10 @@ import urllib.request  # html scraper
 import urllib.error
 from bs4 import BeautifulSoup  # html parser. More info at http://www.crummy.com/software/BeautifulSoup/
 import sqlite3  # allows interaction with sql database (henceforth db)
+import time
+import numpy  # random.exponential determines variable sleep time between server requests; more human-like, for what it's worth.
 
-BASE_URL = "http://www.metacritic.com/publication/pitchfork?page=0"
+BASE_URL = "http://www.metacritic.com/publication/pitchfork?page=" # adjusted
 OPENER = urllib.request.build_opener()
 OPENER.addheaders = [
     ('User-agent', 'Mozilla/5.0')]  # perhaps disingenuous, but claims web scraper is a user-agent vs bot
@@ -36,50 +38,43 @@ def get_site(url):
 
 #############################################
 # Scrape main meta scritic page
-main_soup = get_site(BASE_URL)
 
-review_wraps = main_soup.find_all('div', class_='review_wrap')
+page_number = 0
 
-for r in review_wraps:
-    metascore = r.find_all('li', {'class': 'brief_metascore'})
-    metascore = metascore[0].find_all('span', {'class': 'metascore_w'})[0].text
+# testing this up to page 5 to see if it will pull the first five pages
+while page_number < 5:
 
-    criticscore = r.find_all('span', {'class': 'indiv'})[0].text
+    page_to_pull = BASE_URL + str(page_number)
 
-    pf_url = r.find_all('a', class_='external')[0].attrs['href']
-    meta_url = META_URL + r.find_all('a')[0].attrs['href']
-    print(metascore, criticscore, pf_url, meta_url)
+    main_soup = get_site(page_to_pull)
 
-################################################
-################################################
-pf_url = 'http://www.metacritic.com/music/listening-to-pictures-pentimento-volume-i/jon-hassell'
-# Enter meta url and scrape
-meta_soup = get_site(pf_url)
-#meta_soup = meta_soup.find('div', {'id': 'main'})
+    review_wraps = main_soup.find_all('div', class_='review_wrap')
 
-#user_score = meta_soup.find_all('div', class_='module product_data product_data_summary')
-#user_score = user_score[0].find_all('div', {'class': 'metascore_w user large album'})
-user_score = meta_soup.findAll('div', {'class': '.metascore_w.user.large'})
-#user_score = user_score[0].find_all('div', {'class': 'metascore_w user large'})
+    for r in review_wraps:
 
-# pulling the genre, though we will need to do some string manipulation to clean it up. will also need to decide how to
-# store for multiple genres
-meta_genre = meta_soup.findAll('li', {'class': 'summary_detail product_genre'})[0].text
-print(meta_genre)
+        # We pull four things from the initial review summary box - metascore, criticscore, pf_url, meta_url
+        metascore = r.find_all('li', {'class': 'brief_metascore'})
+        metascore = metascore[0].find_all('span', {'class': 'metascore_w'})[0].text
+        criticscore = r.find_all('span', {'class': 'indiv'})[0].text
+        pf_url = r.find_all('a', class_='external')[0].attrs['href']
+        meta_url = META_URL + r.find_all('a')[0].attrs['href']
+        print(type(meta_url))
 
-################################################
-################################################
-# This section is where we pull a couple necessary details from pitchfork
-pit_url = 'https://pitchfork.com/reviews/albums/jon-hassell-listening-to-pictures-pentimento-volume-one/'
+        # Then we pull the necessary information from the metacritic review of that album.
+        # I've currently commented this out because line 65 is throwing an error. Not sure why.
+        # meta_soup = get_site(meta_url)
+        # user_score = meta_soup.findAll('div', {'class': '.metascore_w.user.large'})
+        # meta_genre = meta_soup.findAll('li', {'class': 'summary_detail product_genre'})[0].text
 
-pitfrk_soup = get_site(pit_url)
+        # This section is where we pull a couple necessary details from pitchfork - contributor(review author), genre, artist name, album name
+        pitfrk_soup = get_site(pf_url)
+        pitfrk_contributor = pitfrk_soup.find_all('a', {'class': 'authors-detail__display-name'})[0].text
+        pitfrk_genre = pitfrk_soup.find_all('a', {'class': 'genre-list__link'})[0].text
 
-# grabs the pitchfork contributor (author of the article)
-pitfrk_contributor = pitfrk_soup.find_all('a', {'class': 'authors-detail__display-name'})[0].text
-print(pitfrk_contributor)
+        # At this point we should save the items to a database
+        print(metascore, criticscore, pf_url, meta_url, pitfrk_contributor, pitfrk_genre)
+        print(1)
+        # time.sleep(numpy.random.exponential(AVERAGE_SECONDS_BETWEEN_REQUESTS, 1))
 
-# grabs the genre as reported by pitchfork
-pitfrk_genre = pitfrk_soup.find_all('a', {'class': 'genre-list__link'})[0].text
-print(pitfrk_genre)
+    page_number += 1
 
-print(1)
