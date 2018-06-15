@@ -57,14 +57,15 @@ while page_number < 5:
         metascore = metascore[0].find_all('span', {'class': 'metascore_w'})[0].text
         criticscore = r.find_all('span', {'class': 'indiv'})[0].text
         pf_url = r.find_all('a', class_='external')[0].attrs['href']
-        meta_url = META_URL + r.find_all('a')[0].attrs['href']
-        print(type(meta_url))
+
+        # needs an "http://" infront of it for it to be valid
+        meta_url = "http://" + META_URL + r.find_all('a')[0].attrs['href']
+        # print(type(meta_url))
 
         # Then we pull the necessary information from the metacritic review of that album.
-        # I've currently commented this out because line 65 is throwing an error. Not sure why.
-        # meta_soup = get_site(meta_url)
-        # user_score = meta_soup.findAll('div', {'class': '.metascore_w.user.large'})
-        # meta_genre = meta_soup.findAll('li', {'class': 'summary_detail product_genre'})[0].text
+        meta_soup = get_site(meta_url)
+        user_score = meta_soup.findAll('div', {'class': '.metascore_w.user.large'})
+        meta_genre = meta_soup.findAll('li', {'class': 'summary_detail product_genre'})[0].text
 
         # This section is where we pull a couple necessary details from pitchfork - contributor(review author), genre, artist name, album name
         pitfrk_soup = get_site(pf_url)
