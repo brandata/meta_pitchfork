@@ -72,8 +72,9 @@ while PAGE_NUMBER < 5:
         pitfrk_contributor = pitfrk_soup.find_all('a', {'class': 'authors-detail__display-name'})[0].text
         pitfrk_genre = pitfrk_soup.find_all('a', {'class': 'genre-list__link'})[0].text
         # artist
-        pitfrk_soup.find_all('ul', {'class': 'artist-links'})[0].text
+        pitfrk_artist = pitfrk_soup.find_all('ul', {'class': 'artist-links'})[0].text
         # album name
+        pitfrk_album = pitfrk_soup.find_all('h1', {'class': 'single-album-tombstone__review-title'})[0].text
 
         # At this point we should save the items to a database
         print(metascore, criticscore, pf_url, meta_url, pitfrk_contributor, pitfrk_genre)

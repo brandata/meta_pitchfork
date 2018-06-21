@@ -63,7 +63,7 @@ def parse_meta_publications(sql, html):
     for r in review_wraps:
 
         meta_url = "http://" + META_URL + r.find_all('a')[0].attrs['href']
-        if not sql.execute("SELECT 1 FROM albums WHERE id = ?;",
+        if not sql.execute("SELECT 1 FROM music_data WHERE id = ?;",
                            (meta_url,)).fetchone():  # if album does not exist in db
 
             # We pull four things from the initial review summary box - metascore, criticscore, pf_url, meta_url
@@ -74,12 +74,26 @@ def parse_meta_publications(sql, html):
             meta_url = "http://" + META_URL + r.find_all('a')[0].attrs['href']
 
             # Then we pull the necessary information from the metacritic review of that album.
-            meta_html = get_site(meta_url)
+            meta_html = get_site_new(meta_url)
             meta_soup = BeautifulSoup(meta_html, 'lxml')
             user_score = meta_soup.findAll('div', {'class': '.metascore_w.user.large'})
             meta_genre = meta_soup.findAll('li', {'class': 'summary_detail product_genre'})[0].text
 
-            print(metascore, criticscore, pf_url, meta_url, user_score, meta_genre)
+            # This section is where we pull a couple necessary details from pitchfork - contributor(review author), genre, artist name, album name
+            pitfrk_html = get_site_new(pf_url)
+            pitfrk_soup = BeautifulSoup(pitfrk_html, 'lxml')
+            pitfrk_contributor = pitfrk_soup.find_all('a', {'class': 'authors-detail__display-name'})[0].text
+            pitfrk_genre = pitfrk_soup.find_all('a', {'class': 'genre-list__link'})[0].text
+            pitfrk_artist = pitfrk_soup.find_all('ul', {'class': 'artist-links'})[0].text
+            pitfrk_album = pitfrk_soup.find_all('h1', {'class': 'single-album-tombstone__review-title'})[0].text
+
+
+            print(metascore, criticscore, pf_url, meta_url, user_score, meta_genre, pitfrk_contributor, pitfrk_genre, pitfrk_artist, pitfrk_album)
+
+            # put the data that we've pulled into a list - insert that list into our database
+            data = [metascore, criticscore, pf_url, meta_url, user_score, meta_genre, pitfrk_contributor, pitfrk_genre, pitfrk_artist, pitfrk_album]
+            insert(sql, data)
+
             print(1)
 
 
@@ -97,3 +111,7 @@ def get_site_new(url):
 
     return html
 
+def insert(sql, data):
+    """Inserts the given data into the database."""
+    sql.execute("INSERT OR IGNORE INTO music_data VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
+                (data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8], data[9],))
