@@ -64,7 +64,7 @@ while PAGE_NUMBER < 5:
 
         # Then we pull the necessary information from the metacritic review of that album.
         meta_soup = get_site(meta_url)
-        user_score = meta_soup.findAll('div', {'class': '.metascore_w.user.large'})
+        user_score = meta_soup.find_all('div', {'class': 'metascore_w user'})
         meta_genre = meta_soup.findAll('li', {'class': 'summary_detail product_genre'})[0].text
 
         # This section is where we pull a couple necessary details from pitchfork - contributor(review author), genre, artist name, album name
