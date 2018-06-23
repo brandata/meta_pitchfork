@@ -9,8 +9,7 @@ import re
 
 BASE_URL = "http://www.metacritic.com/publication/pitchfork?page=" # adjusted
 OPENER = urllib.request.build_opener()
-OPENER.addheaders = [
-    ('User-agent', 'Mozilla/5.0')]  # perhaps disingenuous, but claims web scraper is a user-agent vs bot
+OPENER.addheaders = [('User-agent', 'Mozilla/5.0')]  # perhaps disingenuous, but claims web scraper is a user-agent vs bot
 AVERAGE_SECONDS_BETWEEN_REQUESTS = 5  # that being said, be kind to pitchfork's servers
 START_AT_PAGE = 1  # album review page at which to begin scraping/parsing. Update this if program hangs and must be rerun.
 DATABASE_NAME = 'meta-reviews.db'  # must end in .db
@@ -160,6 +159,6 @@ def insert(sql, data):
                (data[0], data[1], data[2], data[3], data[4],
                 data[5], data[6], data[7], data[8],))
 
-
+# Entry point to the program
 if __name__ == "__main__":
     main()
